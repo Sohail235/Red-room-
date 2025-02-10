@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacker Chat</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    <style>
+        body {
+            background-color: black;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+            border: 2px solid #0f0;
+            box-shadow: 0px 0px 10px #0f0;
+            background: rgba(0, 0, 0, 0.8);
+        }
+        .chat-box {
+            height: 300px;
+            overflow-y: auto;
+            border: 2px solid #0f0;
+            padding: 10px;
+            margin-top: 10px;
+            box-shadow: 0px 0px 10px #0f0;
+            background: rgba(0, 0, 0, 0.8);
+        }
+        .message {
+            background: black;
+            padding: 5px;
+            border-left: 3px solid #0f0;
+            margin: 5px 0;
+            box-shadow: 0px 0px 5px #0f0;
+        }
+        input, button {
+            padding: 10px;
+            border: none;
+            outline: none;
+            margin: 5px;
+            font-family: 'Courier New', monospace;
+        }
+        input {
+            background: black;
+            color: #0f0;
+            border: 2px solid #0f0;
+            box-shadow: 0px 0px 5px #0f0;
+        }
+        button {
+            background: red;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0px 0px 10px red;
+        }
+        .lightning {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: url('https://media.giphy.com/media/l0HlNQ03J5JxX6lva/giphy.gif') no-repeat center;
+            background-size: cover;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="lightning"></div>
+    <h1>💀 HACKER SOHAIL💀</h1>
+    <div class="container">
+        <h2>CODE DAL BHAI</h2>
+        <input type="text" id="accessCode" placeholder="Enter Code">
+        <button onclick="checkAccess()">Enter</button>
+    </div>
+    
+    <div id="chatSection" style="display:none;">
+        <div class="container">
+            <h2>RED ROOM</h2>
+            <div class="chat-box" id="chatBox"></div>
+            <input type="text" id="messageInput" placeholder="Type your message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAnySajQwVJ5n1FZcMaI1f9P0CfCHtVPn8",
+  authDomain: "sk-chatting-38e5a.firebaseapp.com",
+  databaseURL: "https://sk-chatting-38e5a-default-rtdb.firebaseio.com",
+  projectId: "sk-chatting-38e5a",
+  storageBucket: "sk-chatting-38e5a.firebasestorage.app",
+  messagingSenderId: "271996055957",
+  appId: "1:271996055957:web:e1497e7d2aedfcb671869c",
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        function checkAccess() {
+            let code = document.getElementById("accessCode").value;
+            if (code === "319620") {
+                document.querySelector(".container").style.display = "none";
+                document.getElementById("chatSection").style.display = "block";
+                loadMessages();
+            } else {
+                alert("Incorrect Code!");
+            }
+        }
+
+        function sendMessage() {
+            let msg = document.getElementById("messageInput").value;
+            if (msg.trim() !== "") {
+                db.ref("messages").push().set({
+                    message: msg,
+                    timestamp: new Date().toLocaleTimeString()
+                });
+                document.getElementById("messageInput").value = "";
+            }
+        }
+
+        function loadMessages() {
+            db.ref("messages").on("child_added", function(snapshot) {
+                let msgData = snapshot.val();
+                let messageElement = document.createElement("div");
+                messageElement.classList.add("message");
+                messageElement.innerHTML = `<b>Anonymous:</b> ${msgData.message} <br> <small>${msgData.timestamp}</small>`;
+                document.getElementById("chatBox").appendChild(messageElement);
+                document.getElementById("chatBox").scrollTop = document.getElementById("chatBox").scrollHeight;
+            });
+        }
+    </script>
+</body>
+</html>
